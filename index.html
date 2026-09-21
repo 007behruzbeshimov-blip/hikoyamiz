@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bizning hikoyamiz 💞</title>
+<!--
+  ============================================================
+   💞 SEVGI LENTASI — "Bizning hikoyamiz"
+  ============================================================
+  RASMLARNI QANDAY QO'SHISH KERAK:
+  1) Shu html yonida "photos" papkasini oching (avtomatik yaratilgan).
+  2) O'z rasmlaringizni 1.jpg, 2.jpg ... 20.jpg deb nomlab
+     photos papkasiga tashlang.
+     (Agar rasmingiz .png bo'lsa, pastdagi JS da
+      src: "photos/1.jpg" ni "photos/1.png" qilib o'zgartirsangiz
+      kifoya — hattoki bitta ham almashtirmasangiz,
+      sayt o'zi jpg ni ko'rmasa png ni sinab ko'radi.)
+  3) Komplimentlarni o'zgartirmoqchi bo'lsangiz — POSTS massividagi
+     caption qatorlarini tahrirlang. Hammasi shu!
+  ============================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(180deg,#fff5f7 0%,#ffe4ec 25%,#ffd9e4 50%,#ffeef4 75%,#fff5f7 100%);
+    color:#6b2140;
+    overflow-x:hidden;
+  }
+  body.lock{overflow:hidden;height:100vh}
+
+  /* ---------- Floating hearts (fond) ---------- */
+  #bg-hearts{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .heart{position:absolute;bottom:-70px;animation:floatUp linear infinite;opacity:0;user-select:none}
+  @keyframes floatUp{
+    0%{transform:translateY(0) rotate(-12deg);opacity:0}
+    10%{opacity:.45}
+    85%{opacity:.45}
+    100%{transform:translateY(-115vh) rotate(14deg);opacity:0}
+  }
+
+  /* ---------- Sticky header ---------- */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:rgba(255,240,245,.72);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid #ffd0dd;
+    padding:13px 16px;text-align:center;
+  }
+  header h1{font-family:'Great Vibes',cursive;font-size:27px;color:#c9184a;font-weight:400;letter-spacing:.5px}
+  header h1::before{content:"💞 "}
+  #progress{
+    position:absolute;left:0;bottom:-2px;height:3px;width:0%;
+    background:linear-gradient(90deg,#ffb3cb,#ff6b9d,#c9184a);
+    border-radius:3px;box-shadow:0 0 8px rgba(255,107,157,.8);
+    transition:width .15s linear;
+  }
+
+  /* ---------- Feed ---------- */
+  #feed{
+    position:relative;z-index:1;max-width:520px;margin:0 auto;
+    padding:26px 16px 70px;
+    display:flex;flex-direction:column;gap:36px;
+  }
+  #scroll-hint{
+    align-self:center;font-size:13px;color:#d66a8f;
+    background:rgba(255,255,255,.75);border:1px solid #ffd0dd;
+    padding:8px 18px;border-radius:999px;box-shadow:0 6px 16px -8px rgba(201,24,74,.3);
+    transition:opacity .6s, transform .6s;
+  }
+  #scroll-hint.hide{opacity:0;transform:translateY(-8px)}
+
+  .post{transform:scale(var(--s,1));opacity:var(--o,1);will-change:transform,opacity}
+  .post .card{
+    background:#fff;border-radius:26px;overflow:hidden;
+    border:1px solid #ffd3e0;
+    box-shadow:0 20px 44px -20px rgba(201,24,74,.4),0 4px 14px rgba(201,24,74,.08);
+  }
+  .post .photo{position:relative;aspect-ratio:4/5;background:var(--bg,#ffe3ec);overflow:hidden}
+  .post .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .post .photo img.broken{display:none}
+  .ph-emoji{
+    position:absolute;inset:0;display:none;
+    align-items:center;justify-content:center;font-size:60px;
+  }
+  .post .photo img.broken ~ .ph-emoji{display:flex}
+  .ph-num{
+    position:absolute;top:14px;right:14px;
+    background:rgba(255,255,255,.84);color:#c9184a;
+    font-size:12px;font-weight:600;letter-spacing:.5px;
+    padding:5px 13px;border-radius:999px;backdrop-filter:blur(4px);
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+  }
+  .caption{padding:18px 22px 22px}
+  .caption .big-q{font-family:'Playfair Display',serif;font-size:46px;color:#ff8fb3;line-height:.9;height:26px;font-weight:600}
+  .caption p{font-family:'Playfair Display',serif;font-style:italic;font-size:18.5px;color:#6b2140;line-height:1.6}
+  .caption .meta{
+    margin-top:14px;font-size:11.5px;letter-spacing:1px;color:#d66a8f;
+    text-transform:uppercase;font-weight:500;
+  }
+  .caption .meta::before{content:"💞 "}
+
+  /* ---------- Proposal (final) ---------- */
+  .proposal{
+    background:linear-gradient(160deg,#8d1f3f 0%,#c9184a 45%,#ff6b9d 100%);
+    border:1px solid #ffa8c2;border-radius:30px;
+    padding:44px 22px 38px;text-align:center;color:#fff;
+    box-shadow:0 26px 64px -22px rgba(201,24,74,.6);
+    position:relative;
+  }
+  .proposal .ring{font-size:54px;display:inline-block;animation:pulse 1.5s ease-in-out infinite}
+  .proposal h2{
+    font-family:'Great Vibes',cursive;font-weight:400;
+    font-size:clamp(30px,6.5vw,46px);line-height:1.3;
+    margin:16px 0 6px;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,.25);
+  }
+  .proposal .sub{font-size:14px;color:#ffdce8;max-width:330px;margin:12px auto 24px;line-height:1.7}
+  .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;min-height:66px;position:relative}
+  .btnbtn{
+    font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;
+    border:none;border-radius:999px;padding:14px 28px;cursor:pointer;
+    transition:transform .2s, box-shadow .2s, opacity .2s;
+  }
+  #yesBtn{background:#fff;color:#c9184a;box-shadow:0 12px 26px -10px rgba(0,0,0,.35)}
+  #yesBtn:hover{transform:translateY(-3px) scale(1.05)}
+  #noBtn{
+    background:transparent;color:#ffe0eb;border:2px solid #ffc1d5;
+    transition:transform .32s cubic-bezier(.25,1.4,.4,1), opacity .25s;
+  }
+  #noBtn.yes-like{background:#fff;color:#c9184a;box-shadow:0 12px 26px -10px rgba(0,0,0,.35)}
+  #nag{margin-top:14px;font-size:13.5px;color:#ffe0eb;min-height:20px;opacity:0;transition:opacity .4s}
+  #nag.show{opacity:1}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+
+  /* ---------- Intro overlay ---------- */
+  #intro{
+    position:fixed;inset:0;z-index:80;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(120% 120% at 50% 20%,#7a1b3c 0%,#4a0e2b 55%,#2a0718 100%);
+    text-align:center;padding:24px;overflow:hidden;
+    transition:opacity 1s ease, visibility 1s;
+  }
+  #intro.gone{opacity:0;visibility:hidden;pointer-events:none}
+  #intro .inner{max-width:540px;position:relative;z-index:2}
+  #intro .tiny{
+    letter-spacing:5px;font-size:11px;color:#ffb3cb;
+    text-transform:uppercase;margin-bottom:20px;
+  }
+  #intro h1{
+    font-family:'Great Vibes',cursive;font-weight:400;
+    font-size:clamp(34px,8vw,58px);line-height:1.35;color:#fff;
+    text-shadow:0 8px 34px rgba(255,107,157,.5);
+  }
+  #intro .sub2{color:#ffd9e4;margin:20px auto 34px;max-width:360px;font-size:15px;line-height:1.75}
+  #startBtn{
+    font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;color:#c9184a;
+    background:#fff;border:none;border-radius:999px;padding:15px 40px;cursor:pointer;
+    box-shadow:0 16px 36px -12px rgba(255,107,157,.75);
+    transition:transform .25s, box-shadow .25s;
+  }
+  #startBtn:hover{transform:translateY(-3px) scale(1.05)}
+  .intro-heart{position:absolute;bottom:-60px;font-size:26px;opacity:0;animation:floatUp linear infinite;user-select:none}
+
+  /* ---------- Success overlay ---------- */
+  #success{
+    position:fixed;inset:0;z-index:60;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 30%,#ff9dbd,#b3124d 70%,#5c0a28);
+    text-align:center;padding:24px;
+    opacity:0;pointer-events:none;transition:opacity .8s;
+  }
+  #success.show{opacity:1;pointer-events:auto}
+  #success .inner{max-width:470px}
+  #success .ring2{font-size:72px;display:inline-block;animation:pulse 1.4s ease-in-out infinite}
+  #success h2{font-family:'Great Vibes',cursive;font-size:clamp(34px,7vw,52px);color:#fff;line-height:1.25;margin:18px 0 10px;font-weight:400}
+  #success p{color:#ffe3ee;line-height:1.75;margin-bottom:28px;font-size:15px}
+  #success .btnbtn{background:#fff;color:#b3124d;padding:15px 32px;font-weight:600;font-size:15px;border-radius:999px;border:none;cursor:pointer;box-shadow:0 14px 30px -12px rgba(0,0,0,.35)}
+
+  /* ---------- Confetti hearts ---------- */
+  .cf{position:fixed;top:-50px;z-index:75;pointer-events:none;animation:cfFall linear forwards;user-select:none}
+  @keyframes cfFall{
+    0%{transform:translateY(0) rotate(0deg);opacity:1}
+    100%{transform:translateY(118vh) rotate(720deg);opacity:.15}
+  }
+
+  @media (max-width:420px){
+    .caption{padding:16px 18px 19px}
+    .caption p{font-size:17px}
+  }
+</style>
+</head>
+<body class="lock">
+
+<!-- Landshaft / kirish ekrani -->
+<div id="intro">
+  <div class="inner">
+    <div class="tiny">💌 · Bizning hikoyamiz · 💌</div>
+    <h1>Hammasi boshlangan vaqtga qaytishga tayyormisan?</h1>
+    <p class="sub2">20 ta eng yorqin xotira seni kutmoqda. Har bir surat ortida menga berilgan eng aziz daqiqalar bor… 🌹</p>
+    <button id="startBtn">Ha, tayyorman ❤️</button>
+  </div>
+</div>
+
+<!-- Muvaffaqiyat ekrani -->
+<div id="success" aria-hidden="true">
+  <div class="inner">
+    <span class="ring2">💍</span>
+    <h2>Meni dunyodagi eng baxtli odamga aylantirding!</h2>
+    <p>Qolgan umrimni sening yoningda, senga mehr berib o'tkazaman. Bizning hikoyamiz endi endi… yangi sahifasini ochyapti. 💖</p>
+    <button class="btnbtn" onclick="location.reload()">Hikoyani qaytadan ko'rish 🔁</button>
+  </div>
+</div>
+
+<!-- Float qiluvchi yuraklar foni -->
+<div id="bg-hearts"></div>
+
+<header>
+  <h1>Bizning hikoyamiz</h1>
+  <div id="progress"></div>
+</header>
+
+<main id="feed">
+  <div id="scroll-hint">Pastga suring 👇</div>
+</main>
+
+<script>
+/* ============================================================
+   RASMLAR SHU YERDA: photos/1.jpg ... photos/20.jpg
+   (jpg bo'lmasa, avtomatik ravishda .png ni sinab ko'radi)
+   ============================================================ */
+const POSTS = [
+  { src:"photos/1.jpg",   emoji:"🌸", bg:"linear-gradient(135deg,#ffe8f0,#ffd3e2)",
+    caption:"Har bir surating — men uchun eng qimmatli xazina." },
+  { src:"photos/2.jpg",   emoji:"🌷", bg:"linear-gradient(135deg,#fff0e0,#ffdcc0)",
+    caption:"Bu tabassum yuragimdagi eng shirin iz." },
+  { src:"photos/3.jpg",   emoji:"🍂", bg:"linear-gradient(135deg,#fdeee2,#f6d9c0)",
+    caption:"Qoshiqlaring ostida butun dunyom yashiringan." },
+  { src:"photos/4.jpg",   emoji:"🌙", bg:"linear-gradient(135deg,#e8eefb,#d5e0f7)",
+    caption:"Shu suratga qarab, o'sha kunga qaytgim keladi." },
+  { src:"photos/5.jpg",   emoji:"☀️", bg:"linear-gradient(135deg,#fff7dd,#ffe9b0)",
+    caption:"Sen kulganingda dunyodagi hamma narsa joyiga tushadi." },
+  { src:"photos/6.jpg",   emoji:"🍃", bg:"linear-gradient(135deg,#e8f7ec,#d3efe0)",
+    caption:"Yoningda bo'lgan har bir daqiqani qadrlayman." },
+  { src:"photos/7.jpg",   emoji:"🌹", bg:"linear-gradient(135deg,#ffe4ed,#ffcad9)",
+    caption:"Ko'zlaringdagi yorug'lik — mening eng katta omadim." },
+  { src:"photos/8.jpg",   emoji:"⭐", bg:"linear-gradient(135deg,#fff1e0,#ffe0c2)",
+    caption:"Bu kun men uchun oltin xotira bo'lib qoldi." },
+  { src:"photos/9.jpg",   emoji:"🎈", bg:"linear-gradient(135deg,#ffeef4,#ffdcea)",
+    caption:"Sen bilan o'tgan vaqt — menga berilgan eng go'zal sovg'a." },
+  { src:"photos/10.jpg",  emoji:"🌊", bg:"linear-gradient(135deg,#e2f0fb,#cde4f7)",
+    caption:"Senga qaraganimda, dunyo sekinroq aylanadi." },
+  { src:"photos/11.jpg",  emoji:"🍓", bg:"linear-gradient(135deg,#ffe9ee,#ffd2de)",
+    caption:"Tabassumingdan ko'ra go'zal narsani ko'rmaganman." },
+  { src:"photos/12.jpg",  emoji:"🦋", bg:"linear-gradient(135deg,#efe9fb,#ddD3f5)",
+    caption:"Bu suratdagi baxt ko'zimga yorug' bo'lib ko'rinadi." },
+  { src:"photos/13.jpg",  emoji:"🌻", bg:"linear-gradient(135deg,#fff6dd,#ffe8b3)",
+    caption:"Sen — mening har kungi muloyim fikrlarimsan." },
+  { src:"photos/14.jpg",  emoji:"💫", bg:"linear-gradient(135deg,#ecdff8,#d9c9f2)",
+    caption:"Qalbim senga oshiq bo'lgan kundan beri har tong o'zgacha." },
+  { src:"photos/15.jpg",  emoji:"🍁", bg:"linear-gradient(135deg,#faeede,#f2d8b8)",
+    caption:"Birga suratga tushganimizning o'zi — katta baxt." },
+  { src:"photos/16.jpg",  emoji:"❄️", bg:"linear-gradient(135deg,#e3f1fb,#cfe4f4)",
+    caption:"Seni ko'rganimda yuragimda qushlar sayraydi." },
+  { src:"photos/17.jpg",  emoji:"🌈", bg:"linear-gradient(135deg,#fdeef0,#fadadd)",
+    caption:"Bu xotiralar mening eng aziz boyligim." },
+  { src:"photos/18.jpg",  emoji:"🌺", bg:"linear-gradient(135deg,#ffe7f0,#ffcddd)",
+    caption:"Yonimda ekaningda hech narsadan qo'rqmayman." },
+  { src:"photos/19.jpg",  emoji:"🌼", bg:"linear-gradient(135deg,#fff9e3,#ffefc4)",
+    caption:"Sen shunchaki go'zal emas, sen mo'jizasan." },
+  { src:"photos/20.jpg",  emoji:"💐", bg:"linear-gradient(135deg,#ffe2ee,#ffc9da)",
+    caption:"O'n to'qqizta xotira o'tdi… endi eng muhim savolim bor." },
+];
+
+const NOTES = [
+  "Men uchun juda qadrli",
+  "Eng sevimli onlarimdan",
+  "Yurakda saqlanadiganlar",
+  "Unutib bo'lmas kunlardan",
+  "Baxtimga sabab bo'lganlar",
+  "Eng issiq xotiralardan",
+];
+
+/* ---------- Feedni qurish ---------- */
+const feed = document.getElementById('feed');
+
+// Rasm topilmasa: png ni sinab ko'radi, u ham bo'lmasa bezakli joy egallaydi
+window.handleImg = (img) => {
+  const idx = img.dataset.i;
+  if (!img.dataset.tried && idx) {
+    img.dataset.tried = '1';
+    img.src = 'photos/' + idx + '.png';
+  } else {
+    img.classList.add('broken');
+  }
+};
+
+POSTS.forEach((p, i) => {
+  const art = document.createElement('article');
+  art.className = 'post';
+  art.style.setProperty('--bg', p.bg);
+  art.innerHTML = `
+    <div class="card">
+      <div class="photo">
+        <img data-i="${i + 1}" src="${p.src}" alt="Xotira ${i + 1}" loading="lazy" onerror="handleImg(this)">
+        <span class="ph-emoji">${p.emoji}</span>
+        <span class="ph-num">Xotira №${i + 1}</span>
+      </div>
+      <div class="caption">
+        <div class="big-q">“</div>
+        <p>${p.caption}</p>
+        <div class="meta">${NOTES[i % NOTES.length]}</div>
+      </div>
+    </div>`;
+  feed.appendChild(art);
+});
+
+// Oxirgi — asosiy savol
+const proposal = document.createElement('section');
+proposal.className = 'post';
+proposal.innerHTML = `
+  <div class="proposal">
+    <span class="ring">💍</span>
+    <h2>davomini ko'rish uchun menga turmushga chiqishga rozimisan?</h2>
+    <p class="sub">20 ta xotira shu yerda tugadi. Lekin bizning hikoyamiz endi boshlanmoqda… davomini birga yozamizmi?</p>
+    <div class="btns">
+      <button class="btnbtn" id="yesBtn">Ha, roziman 💖</button>
+      <button class="btnbtn" id="noBtn">Hozircha yo'q 🙈</button>
+    </div>
+    <p id="nag"></p>
+  </div>`;
+feed.appendChild(proposal);
+
+/* ---------- Scroll animatsiyasi: ko'rinishdagi o'lcham effekti ----------
+   Quyida paydo bo'lgan yozuv ekran markaziga yetguncha kattalashadi,
+   tepaga chiqib ketayotgani esa sal kichrayib davom etadi. */
+const posts = Array.from(document.querySelectorAll('.post'));
+let ticking = false;
+function updateScroll() {
+  const vh = window.innerHeight;
+  const half = vh / 2;
+  posts.forEach((el) => {
+    const r = el.getBoundingClientRect();
+    const center = r.top + r.height / 2;
+    let d = (center - half) / (vh * 0.6);      // -1 pastda, 0 markaz, 1 tepada
+    d = Math.max(-1, Math.min(1, d));
+    const scale = 1 - Math.abs(d) * 0.13;
+    const op = Math.max(0.15, 1 - Math.abs(d) * 0.5);
+    el.style.setProperty('--s', scale.toFixed(3));
+    el.style.setProperty('--o', op.toFixed(3));
+  });
+  // progress bar
+  const max = document.documentElement.scrollHeight - vh;
+  const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+  document.getElementById('progress').style.width = pct + '%';
+  ticking = false;
+}
+function requestTick() { if (!ticking) { ticking = true; requestAnimationFrame(updateScroll); } }
+window.addEventListener('scroll', requestTick, { passive: true });
+window.addEventListener('resize', requestTick);
+
+// Scroll hint yashirish
+const hint = document.getElementById('scroll-hint');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) hint.classList.add('hide');
+  else hint.classList.remove('hide');
+}, { passive: true });
+
+/* ---------- Yuraklar ---------- */
+const EMOJIS = ['💗','💖','💕','🌹','💘','🌸','❤️','💞'];
+function makeHearts(container, count, big) {
+  for (let i = 0; i < count; i++) {
+    const h = document.createElement('span');
+    h.className = big ? 'intro-heart' : 'heart';
+    h.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    h.style.left = Math.random() * 100 + '%';
+    h.style.fontSize = (big ? 18 : 14) + Math.random() * (big ? 22 : 16) + 'px';
+    h.style.animationDuration = (9 + Math.random() * 12) + 's';
+    h.style.animationDelay = (-Math.random() * 15) + 's';
+    container.appendChild(h);
+  }
+}
+makeHearts(document.getElementById('bg-hearts'), 26, false);
+
+/* ---------- Intro ---------- */
+const intro = document.getElementById('intro');
+makeHearts(intro, 14, true);
+intro.querySelector('#startBtn').addEventListener('click', () => {
+  intro.classList.add('gone');
+  document.body.classList.remove('lock');
+  setTimeout(() => intro.remove(), 1000);
+});
+
+/* ---------- Ha/Yo'q ---------- */
+const yesBtn = document.getElementById('yesBtn');
+const noBtn  = document.getElementById('noBtn');
+const nag    = document.getElementById('nag');
+let dodges = 0;
+const NO_LABELS = [
+  "Hozircha yo'q 🙈",
+  "Haqiqatan ham? 😅",
+  "Yaxshilab o'yla… 🤨",
+  "Menimcha 'Ha' deysan 💘",
+];
+
+noBtn.addEventListener('pointerenter', dodge);
+noBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); dodge(); });
+
+function dodge() {
+  if (dodges >= 3) {
+    nag.textContent = "Savol faqat bitta javobni tan oladi… 😌💍";
+    nag.classList.add('show');
+    noBtn.textContent = "Ha, roziman 💖";
+    noBtn.classList.add('yes-like');
+    noBtn.style.transform = '';
+    return;
+  }
+  dodges++;
+  noBtn.textContent = NO_LABELS[Math.min(dodges, NO_LABELS.length - 1)];
+  const dx = (Math.random() * 220 - 110).toFixed(0);
+  const dy = (26 + Math.random() * 110).toFixed(0);
+  noBtn.style.transform = `translate(${dx}px, ${dy}px)`;
+  if (dodges === 2) {
+    nag.textContent = "Qochib qutula olmaysan 🤭";
+    nag.classList.add('show');
+  }
+}
+
+function accept() {
+  confetti();
+  document.getElementById('success').classList.add('show');
+  document.body.classList.add('lock');
+}
+yesBtn.addEventListener('click', accept);
+noBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (noBtn.classList.contains('yes-like')) accept();
+  else dodge();
+});
+
+/* ---------- Yurak konfeti ---------- */
+function confetti() {
+  const n = 90;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('span');
+    s.className = 'cf';
+    s.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.fontSize = (14 + Math.random() * 26) + 'px';
+    s.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+    s.style.animationDelay = (Math.random() * 0.7) + 's';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 6500);
+  }
+}
+
+/* ---------- Boshlang'ich holat ---------- */
+requestTick();
+</script>
+</body>
+</html>

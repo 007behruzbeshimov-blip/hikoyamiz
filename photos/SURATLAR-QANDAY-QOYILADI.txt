@@ -1,0 +1,17 @@
+💞 RASMLARNI QANDAY QO'YISH KERAK?
+====================================
+
+1) Shu papkaga o'z rasmlaringizni tashlang.
+2) Rasmlar 1.jpg, 2.jpg, 3.jpg ... 20.jpg deb nomlanishi kerak.
+   (Masalan: 1.jpg, 2.jpg, ... 20.jpg)
+3) Agar rasmingiz JPEG emas, PNG bo'lsa:
+   1.png, 2.png ... deb nomlang — sayt o'zi topadi.
+
+Bitta ham rasm qo'ymasangiz ham sayt ishlayveradi:
+har bir rasm o'rnida gulli bezakli joy chiqadi. 🌸
+
+Kompliment matnlarini o'zgartirish uchun:
+bizning-hikoyamiz.html faylini Notepad/VS Code'da ochib,
+POSTS nomli ro'yxatdagi "caption" qatorlarini tahrirlang.
+
+Omad! ❤️
