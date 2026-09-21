@@ -209,7 +209,7 @@
 <!-- Muvaffaqiyat ekrani -->
 <div id="success" aria-hidden="true">
   <div class="inner">
-    <span class="ring2">💍</span>
+    <span class="ring2">🤝</span>
     <h2>Meni dunyodagi eng baxtli odamga aylantirding!</h2>
     <p>Qolgan umrimni sening yoningda, senga mehr berib o'tkazaman. Bizning hikoyamiz endi endi… yangi sahifasini ochyapti. 💖</p>
     <button class="btnbtn" onclick="location.reload()">Hikoyani qaytadan ko'rish 🔁</button>
@@ -324,11 +324,11 @@ const proposal = document.createElement('section');
 proposal.className = 'post';
 proposal.innerHTML = `
   <div class="proposal">
-    <span class="ring">💍</span>
+    <span class="ring">🤝</span>
     <h2>davomini ko'rish uchun har doim yonimda bo'lasanmi?</h2>
     <p class="sub">20 ta xotira shu yerda tugadi. Lekin bizning hikoyamiz endi boshlanmoqda… davomini birga yozamizmi?</p>
     <div class="btns">
-      <button class="btnbtn" id="yesBtn">Ha, roziman 💖</button>
+      <button class="btnbtn" id="yesBtn">Ha, albatta 💖</button>
       <button class="btnbtn" id="noBtn">Hozircha yo'q 🙈</button>
     </div>
     <p id="nag"></p>
@@ -414,7 +414,7 @@ function dodge() {
   if (dodges >= 3) {
     nag.textContent = "Savol faqat bitta javobni tan oladi… 😌💍";
     nag.classList.add('show');
-    noBtn.textContent = "Ha, roziman 💖";
+    noBtn.textContent = "Ha, albatta 💖";
     noBtn.classList.add('yes-like');
     noBtn.style.transform = '';
     return;
